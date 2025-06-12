@@ -5,10 +5,6 @@ app.use(express.json())
 const morgan = require('morgan')
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-const cors = require("cors")
-app.use(cors())
-
-
 morgan.token('body', (req) => {
   if (req.method === "POST"){
   return JSON.stringify(req.body)
