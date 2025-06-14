@@ -1,4 +1,9 @@
+require('dotenv').config()
 const express = require('express')
+const Person = require('./models/person')
+
+console.log(Person)
+
 const app = express()
 app.use(express.json())
 
@@ -40,7 +45,9 @@ let persons = [
 ]
 
 app.get('/api/persons', (request, response) => {
+  Person.find({}).then(persons => {
   response.json(persons)
+  })
 })
 
 app.get('/info', (request, response) => {
@@ -67,47 +74,25 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.random() * 10
-    : 0
-  return String(maxId + persons.length)
-}
-
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
-  const repeatedName = persons.filter(person => person.name === body.name)
-
-  if (!body.name || !body.number) {
-    return response.status(400).json({ 
-      error: 'content missing' 
-    })
-  }
-
-  else if (repeatedName.length > 0){
-    return response.status(400).json({ 
-      error: 'name must be unique' 
-    })
-  }
-
-  const person = {
-    id: generateId(),
-    name: body.name,
-    number: body.number
-  }
-
-  persons = persons.concat(person)
-
-  response.json(persons)
-  
+  const person = new Person({
+  name: `${body.name}`,
+  number: `${body.number}`
 })
+
+person.save().then(result => {
+  console.log("new person added to the database")
+})
+})
+  
 
 app.get("/", (request,response) => {
 response.send("Hello World!")
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
