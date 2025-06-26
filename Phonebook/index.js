@@ -6,6 +6,7 @@ console.log(Person)
 
 const app = express()
 app.use(express.json())
+app.use(express.static('dist'))
 
 const morgan = require('morgan')
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
