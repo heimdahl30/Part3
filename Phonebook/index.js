@@ -1,11 +1,15 @@
 require('dotenv').config()
 const express = require('express')
+const cors = require('cors')
 const Person = require('./models/person')
+
 
 console.log(Person)
 
 const app = express()
 app.use(express.json())
+
+app.use(cors())
 
 app.use(express.static('dist'))
 
@@ -75,7 +79,7 @@ app.put('/api/persons/:id', (request,response, next) => {
   const id = request.params.id
   const body = request.body
  
-  Person.findByIdAndUpdate(id,{number: body.number},{new: true}).then(updatedData => {
+  Person.findByIdAndUpdate(id,{number: body.number},{new: true, runValidators: true}).then(updatedData => {
     if(updatedData){
       console.log("Update successful")
       return response.status(201).json(updatedData);
